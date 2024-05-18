@@ -60,7 +60,7 @@ body {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    font-size: 4vw;
+    font-size: 4%;
 }
 
 @media (max-width: 768px) {
