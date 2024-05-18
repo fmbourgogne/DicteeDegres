@@ -22,7 +22,7 @@ body {
 
 .note-block {
     width: 10vw;
-    height: 10vw;
+    height: 2vw;
     margin-right: 1vw;
     background-color: skyblue;
     position: absolute;
@@ -51,7 +51,7 @@ body {
 }
 
 .key {
-    width: 10vw;
+    width: 10%;
     height: 15vh;
     margin: 1vw;
     background-color: white;
