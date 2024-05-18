@@ -1,83 +1,64 @@
-body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+const notesDisplay = document.getElementById('notesDisplay');
+const keys = document.querySelectorAll('.key');
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+const noteFrequencies = {
+    'C4': 261.63,
+    'D4': 293.66,
+    'E4': 329.63,
+    'F4': 349.23,
+    'G4': 392.00,
+    'A4': 440.00,
+    'B4': 493.88,
+    'C5': 523.25
+};
+
+const noteHeights = {
+    'C4': '0%',
+    'D4': '14.3%',
+    'E4': '28.6%',
+    'F4': '42.9%',
+    'G4': '57.2%',
+    'A4': '71.5%',
+    'B4': '85.8%',
+    'C5': '100%'
+};
+
+let notePositionX = 0;
+
+keys.forEach(key => {
+    key.addEventListener('click', () => {
+        const note = key.dataset.note;
+        playSound(noteFrequencies[note]);
+        displayNoteBlock(note);
+    });
+});
+
+function playSound(frequency) {
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+    oscillator.start();
+    gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 2);
+    oscillator.stop(audioContext.currentTime + 2);
 }
 
-.title {
-    font-size: 6vw;
-    margin: 5vw 0;
-}
+function displayNoteBlock(note) {
+    const noteBlock = document.createElement('div');
+    noteBlock.className = 'note-block';
+    noteBlock.style.left = notePositionX + 'vw';
+    noteBlock.style.bottom = noteHeights[note];
+    notesDisplay.appendChild(noteBlock);
 
-.notes-display {
-    width: 90vw;
-    height: 30vh;
-    border: 1px solid black;
-    position: relative;
-    overflow: hidden;
-}
+    notePositionX += 12; // Ajustez selon vos besoins pour l'espacement
 
-.note-block {
-    width: 10vw;
-    height: 10vw;
-    margin-right: 1vw;
-    background-color: skyblue;
-    position: absolute;
-}
-
-.staff {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    pointer-events: none;
-}
-
-.staff-line {
-    border-top: 1px solid black;
-    height: 14.3%;
-}
-
-.keyboard {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 5vw;
-}
-
-.key {
-    width: 10vw;
-    height: 15vh;
-    margin: 1vw;
-    background-color: white;
-    border: 1px solid black;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    font-size: 4vw;
-}
-
-@media (max-width: 768px) {
-    .title {
-        font-size: 8vw;
-    }
-    .note-block {
-        width: 10vw;
-        height: 10vw;
-    }
-    .key {
-        width: 12vw;
-        height: 12vh;
-        font-size: 5vw;
-    }
-    .notes-display {
-        width: 95vw;
-        height: 35vh;
+    if (notePositionX > notesDisplay.clientWidth) {
+        notePositionX = 0;
+        const oldNotes = document.querySelectorAll('.note-block');
+        oldNotes.forEach(oldNote => notesDisplay.removeChild(oldNote));
     }
 }
+
